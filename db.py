@@ -1,5 +1,5 @@
 from pymilvus import connections, Collection, utility
-from pymilvus import Collection, CollectionSchema, FieldSchema, DataType
+from pymilvus import Collection, CollectionSchema, FieldSchema, DataType, MetricType
 from decouple import config
 
 conn = connections.connect("default", uri=config("DB_URI"), token=config("DB_TOKEN"))
@@ -52,7 +52,7 @@ def batch_insert(data):
 
 
 def do_search(vec):
-    search_params = {"metric_type": "L2", "params": {"nprobe": 10}}
+    search_params = {"metric_type": MetricType.COSINE, "params": {"nprobe": 10}}
     results = collection.search(
         [vec], "vector", search_params, output_fields=["text", "url"], limit=10
     )
