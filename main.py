@@ -32,6 +32,38 @@ app = FastAPI()
 """
 
 
+def make_response(q, results):
+    data_map = {}
+    for result in results:
+        for hit in result:
+
+            data_url = hit.entity.get("url")
+
+            if data_url in data_map:
+                data_map[data_url]["content"] += "\n" + hit.entity.get("text")
+            else:
+                data_map[data_url] = {
+                    "title": q,
+                    "content": hit.entity.get("text"),
+                    "score": hit.distance,
+                }
+
+    hit_data = []
+    for key, value in data_map.items():
+        item = dict(value)
+        item["raw_content"] = None
+        item["url"] = key
+        hit_data.append(item)
+
+    return {
+        "query": q,
+        "follow_up_questions": None,
+        "answer": None,
+        "images": None,
+        "results": hit_data,
+    }
+
+
 def query(q):
 
     start_ts = time.time()
@@ -55,40 +87,17 @@ def query(q):
             continue
         do_index(url, content)
 
-    vec = embedding(q)[0]
-    results = do_search(vec)
+    try:
+        vec = embedding([q])[0]
+        results = do_search(vec)
+        output = make_response(q, results)
+        end_ts = time.time()
+        output["response_time"] = end_ts - start_ts
+        return output
+    except Exception as e:
+        print(e)
 
-    data_map = {}
-    for result in results:
-        for hit in result:
-
-            data_url = hit.entity.get("url")
-
-            if data_url in data_map:
-                data_map[data_url]["content"] += "\n" + hit.entity.get("text")
-            else:
-                data_map[data_url] = {
-                    "title": q,
-                    "content": hit.entity.get("text"),
-                    "score": hit.distance,
-                }
-
-    hit_data = []
-    for key, value in data_map.items():
-        item = dict(value)
-        item["raw_content"] = None
-        item["url"] = key
-        hit_data.append(item)
-
-    end_ts = time.time()
-    return {
-        "query": q,
-        "follow_up_questions": None,
-        "answer": None,
-        "images": None,
-        "results": hit_data,
-        "response_time": end_ts - start_ts,
-    }
+    return "fail to search"
 
 
 @app.get("/")
