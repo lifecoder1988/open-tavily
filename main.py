@@ -97,7 +97,7 @@ def query(q):
         return output
     except Exception as e:
         print(f"Error during search: {e}")
-        print(traceback.print_exc())
+        print(traceback.format_exc())
 
     return "fail to search"
 
