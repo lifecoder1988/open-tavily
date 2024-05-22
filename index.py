@@ -25,6 +25,7 @@ def get_chunks(content):
 def do_index(url, content):
 
     try:
+        print("start do index...")
         chunks = get_chunks(content)
         # print(chunks)
         vectors = batch_embedding(chunks)
@@ -33,5 +34,6 @@ def do_index(url, content):
         for i in range(0, len(chunks)):
             data.append({"vector": vectors[i], "url": url, "text": chunks[i]})
         batch_insert(data)
+        print("index finished")
     except Exception as e:
         print(f"Error during query: {e}")
