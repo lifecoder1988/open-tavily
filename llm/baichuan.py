@@ -16,6 +16,7 @@ def embedding(input):
     # 构造请求体数据
     data = {"model": "Baichuan-Text-Embedding", "input": input}
 
+    print("start query embedding...")
     # 发送 POST 请求
     response = requests.post(url, json=data, headers=headers)
     data = response.json()
@@ -27,6 +28,7 @@ def embedding(input):
     for item in data["data"]:
         result.append(item["embedding"])
 
+    print("query embedding success")
     return result
 
 
