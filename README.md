@@ -8,6 +8,10 @@
 - 创建环境变量 .env 文件 参考 env.sample
 - .venv/bin/uvicorn main:app 运行项目 开发环境使用 --reload 参数
 
+## windows
+
+- .venv\Scripts\activate 激活环境 
+
 
 ## 支持的大模型 
 
@@ -29,15 +33,17 @@
 ## 路线
 
 - [ ] 支持 openai embeding
-- [ ] 并发抓取网页
+- [x] 并发抓取网页
 - [ ] 支持第三方spider(low)
 - [ ] 优化api时效性 5秒以内
 - [ ] 增加日志
-- [ ] 网络请求增加重试
+- [x] 网络请求增加重试
 - [ ] 支持docker部署
 - [ ] 支持各种大语言模型
 - [ ] 支持各种向量数据库
 - [ ] 完善网页vector的更新机制(low)
+- [ ] config统一管理
+- [ ] 数据库连接重试
 
 ## 检索优化思路
 

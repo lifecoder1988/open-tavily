@@ -1,6 +1,7 @@
 from pymilvus import connections, Collection, utility
 from pymilvus import Collection, CollectionSchema, FieldSchema, DataType
 from decouple import config
+import time 
 
 conn = connections.connect("default", uri=config("DB_URI"), token=config("DB_TOKEN"))
 
@@ -52,10 +53,16 @@ def batch_insert(data):
     # print(data)
     insert_result = collection.insert(data)
     print("Number of inserted entities:", len(insert_result.primary_keys))
-    collection.load()
+    
 
 
 def do_search(vec):
+
+    start_time = time.time()
+    collection.load()
+    end_time = time.time()
+    print(f"Collection loaded in {end_time - start_time} seconds.")
+
     search_params = {"metric_type": "COSINE", "params": {"nprobe": 10}}
     results = collection.search(
         [vec], "vector", search_params, output_fields=["text", "url"], limit=10

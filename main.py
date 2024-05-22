@@ -5,6 +5,7 @@ from index import do_index, embedding
 from db import is_doc_exist, do_search
 import time
 import json
+import asyncio
 
 from fastapi import FastAPI
 from pydantic import BaseModel
@@ -64,8 +65,18 @@ def make_response(q, results):
         "results": hit_data,
     }
 
+async def build_url_index(url):
+    
+    print("start build")
+    is_exist = await asyncio.to_thread(is_doc_exist, url)
+    if is_exist:
+        print("already indexed")
+        return 
+    content = await asyncio.to_thread(crawl, url)
+    await asyncio.to_thread(do_index, url, content)
+    print("build success")
 
-def query(q):
+async def query(q):
 
     start_ts = time.time()
     limit = 5
@@ -75,20 +86,17 @@ def query(q):
     result = searxng_search.search_searxng(q, searxng_token, searxng_host)
 
     # print(result)
-
+    tasks = []
     count = 0
     for item in result["results"]:
 
         if count > limit:
             break
         count += 1
-        url = item["url"]
-        if is_doc_exist(url):
-            print("already indexed")
-            continue
-        content = crawl(item["url"])
-        do_index(url, content)
+        tasks.append(build_url_index(item["url"]))
 
+    await asyncio.gather(*tasks)
+    
     try:
         vec = embedding([q])[0]
         results = do_search(vec)
@@ -106,7 +114,8 @@ def query(q):
 @app.get("/")
 async def search(q: Optional[str] = None):
     if q:
-        return query(q)
+        result = await query(q)
+        return result 
     else:
         # 返回所有项目
         return "q is empty"

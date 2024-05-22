@@ -1,7 +1,8 @@
 import requests
 from decouple import config
+from retrying import retry
 
-
+@retry(stop_max_attempt_number=3, wait_fixed=500)
 def embedding(input):
     # 配置 API URL 和你的 Baichuan API 密钥
     url = "http://api.baichuan-ai.com/v1/embeddings"
