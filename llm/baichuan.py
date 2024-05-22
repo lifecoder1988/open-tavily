@@ -20,6 +20,10 @@ def embedding(input):
     response = requests.post(url, json=data, headers=headers)
     data = response.json()
     result = []
+
+    if "data" not in data:
+        print(data)
+
     for item in data["data"]:
         result.append(item["embedding"])
 
