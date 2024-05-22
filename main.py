@@ -9,6 +9,7 @@ import json
 from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import List, Optional
+import traceback
 
 app = FastAPI()
 
@@ -96,6 +97,7 @@ def query(q):
         return output
     except Exception as e:
         print(e)
+        traceback.print_exc()
 
     return "fail to search"
 
