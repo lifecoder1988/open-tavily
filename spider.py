@@ -43,10 +43,10 @@ def crawl(url: str) -> str:
             return "Failed to retrieve content."
     except requests.exceptions.RequestException as e:
         # Handle any request-related errors
-        return json.dumps({"error": f"Request error: {str(e)}"})
+        return "ERROR"
     except Exception as e:
         # Handle any other parsing-related errors
-        return json.dumps({"error": f"Parsing error: {str(e)}"})
+        return "ERROR"
 
 
 # Example usage

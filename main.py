@@ -68,7 +68,7 @@ def make_response(q, results):
 def query(q):
 
     start_ts = time.time()
-    limit = 1
+    limit = 5
     searxng_token = config("SEARXNG_TOKEN")
     searxng_host = config("SEARXNG_HOST")
     print(searxng_token)
@@ -78,14 +78,15 @@ def query(q):
 
     count = 0
     for item in result["results"]:
-        content = crawl(item["url"])
-        url = item["url"]
+
         if count > limit:
             break
         count += 1
+        url = item["url"]
         if is_doc_exist(url):
             print("already indexed")
             continue
+        content = crawl(item["url"])
         do_index(url, content)
 
     try:
