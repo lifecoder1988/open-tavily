@@ -26,7 +26,7 @@ def do_index(url, content):
 
     try:
         chunks = get_chunks(content)
-        print(chunks)
+        # print(chunks)
         vectors = batch_embedding(chunks)
 
         data = []
@@ -35,10 +35,3 @@ def do_index(url, content):
         batch_insert(data)
     except Exception as e:
         print(f"Error during query: {e}")
-
-
-def search(query):
-    vec = embedding(query)[0]
-    results = do_search(vec)
-    for result in results:
-        print(result)

@@ -45,7 +45,7 @@ def is_doc_exist(url):
 
 def batch_insert(data):
 
-    print(data)
+    # print(data)
     insert_result = collection.insert(data)
     print("Number of inserted entities:", len(insert_result.primary_keys))
     collection.load()
