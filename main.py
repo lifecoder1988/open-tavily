@@ -96,7 +96,7 @@ def query(q):
         output["response_time"] = end_ts - start_ts
         return output
     except Exception as e:
-        print(e)
+        print(f"Error during search: {e}")
         traceback.print_exc()
 
     return "fail to search"
