@@ -68,7 +68,7 @@ def make_response(q, results):
 def query(q):
 
     start_ts = time.time()
-    limit = 5
+    limit = 1
     searxng_token = config("SEARXNG_TOKEN")
     searxng_host = config("SEARXNG_HOST")
     print(searxng_token)
