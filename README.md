@@ -10,49 +10,47 @@
 
 ## windows
 
-- .venv\Scripts\activate 激活环境 
+- .venv\Scripts\activate 激活环境
 
+## 支持的大模型
 
-## 支持的大模型 
-
-- [x] 百川 
-
+- [x] 百川
+- [x] openai
 
 ## 支持的向量数据库
 
 - [x] milvus
 
-
 ## 重要项目依赖
 
-- langchain_text_splitters 后面要去掉对langchain的依赖
-- searxng 
+- langchain_text_splitters 后面要去掉对 langchain 的依赖
+- searxng
 - fastapi
-- bs4 
+- bs4
 
 ## 路线
 
-- [ ] 支持 openai embeding
+- [x] 支持 openai embeding
 - [x] 并发抓取网页
-- [ ] 支持第三方spider(low)
-- [ ] 优化api时效性 5秒以内
+- [ ] 支持第三方 spider(low)
+- [ ] 优化 api 时效性 5 秒以内
 - [ ] 增加日志
 - [x] 网络请求增加重试
-- [ ] 支持docker部署
+- [ ] 支持 docker 部署
 - [ ] 支持各种大语言模型
 - [ ] 支持各种向量数据库
-- [ ] 完善网页vector的更新机制(low)
-- [ ] config统一管理
+- [ ] 完善网页 vector 的更新机制(low)
+- [ ] config 统一管理
 - [ ] 数据库连接重试
 
 ## 检索优化思路
 
-目标是控制在8秒以内
+目标是控制在 8 秒以内
 
-- 第一步是请求searxng 大概300毫秒
-- 第二步是并发抓取网页，如果抓取过了就不要再抓取了 控制在4秒以内
-- 第三步是调用接口计算embeding 控制在1秒内
-  - 百川支持批量，但一批最多只有16个字符串
-  - openai接口支持批量，一批最多2048个字符串
-- 写入索引+检索 控制在1秒内
-- 其他内存操作 1秒内
+- 第一步是请求 searxng 大概 300 毫秒
+- 第二步是并发抓取网页，如果抓取过了就不要再抓取了 控制在 4 秒以内
+- 第三步是调用接口计算 embeding 控制在 1 秒内
+  - 百川支持批量，但一批最多只有 16 个字符串
+  - openai 接口支持批量，一批最多 2048 个字符串
+- 写入索引+检索 控制在 1 秒内
+- 其他内存操作 1 秒内
