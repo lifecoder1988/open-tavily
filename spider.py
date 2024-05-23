@@ -33,7 +33,7 @@ def crawl(url: str) -> str:
                 script_or_style.decompose()
             # Get text and remove leading/trailing whitespace
             text = soup.get_text()
-            text = text[:10000]
+            text = text[:20000]
             # Condense all whitespace to one space for better readability
             lines = (line.strip() for line in text.splitlines())
             chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
