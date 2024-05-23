@@ -48,7 +48,7 @@ def make_response(titles, q, results):
                 data_map[data_url]["content"] += "\n" + hit.entity.get("text")
             else:
                 data_map[data_url] = {
-                    "title": titles[data_url],
+                    "title": titles.get(data_url, q),
                     "content": hit.entity.get("text"),
                     "score": hit.distance,
                 }
