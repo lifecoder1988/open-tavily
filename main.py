@@ -1,18 +1,21 @@
 from spider import crawl
 from decouple import config
 import searxng_search
-from index import do_index, embedding
+from index import do_index
 from db import is_doc_exist, do_search
 import time
 import json
 import asyncio
-
+from llm.llm import get_llm
 from fastapi import FastAPI
-from pydantic import BaseModel
-from typing import List, Optional
+
 import traceback
+from typing import Optional
+
 
 app = FastAPI()
+
+backend_llm = get_llm()
 
 """
 {
@@ -34,7 +37,7 @@ app = FastAPI()
 """
 
 
-def make_response(q, results):
+def make_response(titles, q, results):
     data_map = {}
     for result in results:
         for hit in result:
@@ -45,7 +48,7 @@ def make_response(q, results):
                 data_map[data_url]["content"] += "\n" + hit.entity.get("text")
             else:
                 data_map[data_url] = {
-                    "title": q,
+                    "title": titles[data_url],
                     "content": hit.entity.get("text"),
                     "score": hit.distance,
                 }
@@ -65,16 +68,18 @@ def make_response(q, results):
         "results": hit_data,
     }
 
+
 async def build_url_index(url):
-    
+
     print("start build")
     is_exist = await asyncio.to_thread(is_doc_exist, url)
     if is_exist:
         print("already indexed")
-        return 
+        return
     content = await asyncio.to_thread(crawl, url)
     await asyncio.to_thread(do_index, url, content)
     print("build success")
+
 
 async def query(q):
 
@@ -88,19 +93,23 @@ async def query(q):
     # print(result)
     tasks = []
     count = 0
+    titles = {}
     for item in result["results"]:
 
         if count > limit:
             break
         count += 1
+        titles[item["url"]] = item["title"]
+
         tasks.append(build_url_index(item["url"]))
 
     await asyncio.gather(*tasks)
-    
+
+    print("start query...")
     try:
-        vec = embedding([q])[0]
+        vec = backend_llm.embedding([q])[0]
         results = do_search(vec)
-        output = make_response(q, results)
+        output = make_response(titles, q, results)
         end_ts = time.time()
         output["response_time"] = end_ts - start_ts
         return output
@@ -115,7 +124,7 @@ async def query(q):
 async def search(q: Optional[str] = None):
     if q:
         result = await query(q)
-        return result 
+        return result
     else:
         # 返回所有项目
         return "q is empty"

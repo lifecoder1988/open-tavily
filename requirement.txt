@@ -8,3 +8,4 @@ requests==2.32.2
 uvicorn==0.29.0
 langchain-text-splitters
 retrying
+openai

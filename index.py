@@ -1,12 +1,16 @@
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from llm.baichuan import batch_embedding, embedding
-from db import batch_insert, do_search
+
+from llm.llm import get_llm
+
+from db import batch_insert
+
+backend_llm = get_llm()
 
 
 def get_chunks(content):
     text_splitter = RecursiveCharacterTextSplitter(
         # Set a really small chunk size, just to show.
-        chunk_size=500,
+        chunk_size=backend_llm.get_chunk_limit(),
         chunk_overlap=50,
         length_function=len,
         is_separator_regex=False,
@@ -28,7 +32,7 @@ def do_index(url, content):
         print("start do index...")
         chunks = get_chunks(content)
         # print(chunks)
-        vectors = batch_embedding(chunks)
+        vectors = backend_llm.batch_embedding(chunks)
 
         data = []
         for i in range(0, len(chunks)):
