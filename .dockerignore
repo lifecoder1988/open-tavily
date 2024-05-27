@@ -1,0 +1,7 @@
+volumes
+.gitignore
+.dockerignore
+.vscode
+env.sample
+README.md
+.git
