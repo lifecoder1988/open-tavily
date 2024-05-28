@@ -1,0 +1,28 @@
+services:
+  milvus:
+    image: milvusdb/milvus:v2.4.1
+    container_name: tavily-milvus
+    ports:
+      - "19530:19530"
+      - "9091:9091"
+      - "2379:2379"
+    volumes:
+      - ./volumes/milvus:/var/lib/milvus
+      - ./config/embedEtcd.yaml:/milvus/configs/embedEtcd.yaml
+    security_opt:
+      - seccomp:unconfined
+    environment:
+      - "ETCD_USE_EMBED=true"
+      - "ETCD_DATA_DIR=/var/lib/milvus/etcd"
+      - "ETCD_CONFIG_PATH=/milvus/configs/embedEtcd.yaml"
+      - "COMMON_STORAGETYPE=local"
+    command: ["milvus", "run", "standalone"]
+
+  backend:
+    build: ./
+    platform: linux/amd64
+    container_name: tavily-api
+    ports:
+      - "8000:8000"
+    depends_on:
+      - milvus
